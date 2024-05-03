@@ -26,8 +26,6 @@ extern int DRV_A;
 extern int DRV_B;
 extern int DIR_A;
 extern int DIR_B;
-extern int BUZZ;
-extern int FAN;
 extern int DRV_A_ON;
 extern int DRV_B_ON;
 extern int DIR_A_ON;
@@ -449,13 +447,13 @@ static esp_err_t stream_handler(httpd_req_t *req){
         last_frame = fr_end;
         frame_time /= 1000;
         uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
-        Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps), %u+%u+%u+%u=%u %s%d\n",
-            (uint32_t)(_jpg_buf_len),
-            (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
-            avg_frame_time, 1000.0 / avg_frame_time,
-            (uint32_t)ready_time, (uint32_t)face_time, (uint32_t)recognize_time, (uint32_t)encode_time, (uint32_t)process_time,
-            (detected)?"DETECTED ":"", face_id
-        );
+        // Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps), %u+%u+%u+%u=%u %s%d\n",
+        //     (uint32_t)(_jpg_buf_len),
+        //     (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
+        //     avg_frame_time, 1000.0 / avg_frame_time,
+        //     (uint32_t)ready_time, (uint32_t)face_time, (uint32_t)recognize_time, (uint32_t)encode_time, (uint32_t)process_time,
+        //     (detected)?"DETECTED ":"", face_id
+        // );
     }
 
     last_frame = 0;
@@ -586,124 +584,101 @@ static esp_err_t state_handler(httpd_req_t *req){
 
     if(!strcmp(cmd, "F")) {
       Serial.println("Forward");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = HIGH;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = HIGH;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, HIGH);
+      digitalWrite(DRV_B, HIGH);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "B")) {
       Serial.println("Backward");
-      DRV_A_ON = LOW;
-      DRV_B_ON = LOW;
-      DIR_A_ON = LOW;
-      DIR_B_ON = LOW;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, LOW);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "R")) {
       Serial.println("Turn Right");
-      DRV_A = HIGH;
-      DRV_B = HIGH;
-      DIR_A = LOW;
-      DIR_B = LOW;
-      BUZZ = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, HIGH);
+      digitalWrite(DRV_B, HIGH);
+      digitalWrite(DIR_A, LOW);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "L")) {
       Serial.println("Turn Left");
-      DRV_A_ON = LOW;
-      DRV_B_ON = LOW;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = HIGH;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "G")) {
       Serial.println("Howl Forward");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = HIGH;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = HIGH;
-      BUZZ_ON = HIGH;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, HIGH);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "H")) {
       Serial.println("Backward Left");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = LOW;
-      DIR_A_ON = LOW;
-      DIR_B_ON = LOW;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, HIGH);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, LOW);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "I")) {
       Serial.println("Howl Forward");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = HIGH;
-      DIR_A_ON = LOW;
-      DIR_B_ON = LOW;
-      BUZZ_ON = HIGH;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, HIGH);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
     
     else if(!strcmp(cmd, "J")) {
       Serial.println("Backward Right");
-      DRV_A_ON = LOW;
-      DRV_B_ON = LOW;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = LOW;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
   
-    else if(!strcmp(cmd, "V")) {
+    else if(!strcmp(cmd, "W")) {
       Serial.println("Fan On");
-      DRV_A_ON = DRV_A_ON;
-      DRV_B_ON = DRV_B_ON;
-      DIR_A_ON = DIR_A_ON;
-      DIR_B_ON = DIR_B_ON;
-      BUZZ_ON = BUZZ_ON;
-      FAN_ON = HIGH;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, HIGH);
+      digitalWrite(DIR_A, LOW);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
     
-    else if(!strcmp(cmd, "v")) {
+    else if(!strcmp(cmd, "w")) {
       Serial.println("Fan Off");
-      DRV_A_ON = DRV_A_ON;
-      DRV_B_ON = DRV_B_ON;
-      DIR_A_ON = DIR_A_ON;
-      DIR_B_ON = DIR_B_ON;
-      BUZZ_ON = BUZZ_ON;
-      FAN_ON = LOW;
+      digitalWrite(DRV_A, LOW);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, LOW);
+      digitalWrite(DIR_B, HIGH);
       httpd_resp_set_type(req, "text/html");
     }
 
     // else {
     else if(!strcmp(cmd, "S")) {
       Serial.println("Stop");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = LOW;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = LOW;
-      BUZZ_ON = LOW;
-      FAN_ON = FAN_ON;
-
+      digitalWrite(DRV_A, HIGH);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
 
@@ -711,12 +686,10 @@ static esp_err_t state_handler(httpd_req_t *req){
     // For Safety Consideration
     else {
       Serial.println("Stop! Pack Loss");
-      DRV_A_ON = HIGH;
-      DRV_B_ON = LOW;
-      DIR_A_ON = HIGH;
-      DIR_B_ON = LOW;
-      BUZZ_ON = LOW;
-      FAN_ON = LOW;
+      digitalWrite(DRV_A, HIGH);
+      digitalWrite(DRV_B, LOW);
+      digitalWrite(DIR_A, HIGH);
+      digitalWrite(DIR_B, LOW);
       httpd_resp_set_type(req, "text/html");
     }
 
@@ -724,8 +697,6 @@ static esp_err_t state_handler(httpd_req_t *req){
     digitalWrite(DRV_B, DRV_B_ON);
     digitalWrite(DIR_A, DIR_A_ON);
     digitalWrite(DIR_B, DIR_B_ON);
-    digitalWrite(BUZZ, BUZZ_ON);
-    digitalWrite(FAN, FAN_ON);
 
     Serial.println(digitalRead(DRV_A));
     Serial.println(digitalRead(DRV_B));
@@ -877,7 +848,7 @@ void startCameraServer(){
     if (httpd_start(&camera_httpd, &config) == ESP_OK) {
         httpd_register_uri_handler(camera_httpd, &index_uri);
         httpd_register_uri_handler(camera_httpd, &cmd_uri);
-        httpd_register_uri_handler(camera_httpd, &status_uri);
+        // httpd_register_uri_handler(camera_httpd, &status_uri);
         httpd_register_uri_handler(camera_httpd, &capture_uri);
         httpd_register_uri_handler(camera_httpd, &state_uri);
     }

@@ -720,18 +720,21 @@ static esp_err_t state_handler(httpd_req_t *req){
       httpd_resp_set_type(req, "text/html");
     }
 
-    Serial.println(digitalRead(DRV_A));
-    Serial.println(digitalRead(DRV_B));
-    Serial.println(digitalRead(DIR_A));
-    Serial.println(digitalRead(DIR_B));
-    return httpd_resp_send(req, "OK", 2);
-    
     digitalWrite(DRV_A, DRV_A_ON);
     digitalWrite(DRV_B, DRV_B_ON);
     digitalWrite(DIR_A, DIR_A_ON);
     digitalWrite(DIR_B, DIR_B_ON);
     digitalWrite(BUZZ, BUZZ_ON);
     digitalWrite(FAN, FAN_ON);
+
+    Serial.println(digitalRead(DRV_A));
+    Serial.println(digitalRead(DRV_B));
+    Serial.println(digitalRead(DIR_A));
+    Serial.println(digitalRead(DIR_B));
+    Serial.println(digitalRead(BUZZ));
+    Serial.println(digitalRead(FAN));
+
+    return httpd_resp_send(req, "OK", 2);
     // else {
     //   res = -1;
     // }
